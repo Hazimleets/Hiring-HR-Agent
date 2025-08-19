@@ -1,0 +1,11 @@
+flask
+flask-cors
+gunicorn
+requests
+sentence-transformers
+faiss-cpu
+scikit-learn
+numpy
+pandas
+sqlalchemy
+pickle5

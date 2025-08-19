@@ -1,0 +1,30 @@
+# Step 1: Build frontend
+FROM node:18 AS frontend-build
+WORKDIR /frontend
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm install
+COPY frontend/ .
+RUN npm run build
+
+# Step 2: Backend with Python
+FROM python:3.10-slim AS backend
+WORKDIR /app
+
+# Install system dependencies (for numpy, faiss, etc.)
+RUN apt-get update && apt-get install -y build-essential libpq-dev curl && rm -rf /var/lib/apt/lists/*
+
+# Copy backend requirements
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
+
+# Copy backend code
+COPY backend/ .
+
+# Copy frontend build into backend static folder
+COPY --from=frontend-build /frontend/build ./static
+
+# Expose port
+EXPOSE 8080
+
+# Start app with Gunicorn
+CMD ["gunicorn", "-b", "0.0.0.0:8080", "app:app"]
