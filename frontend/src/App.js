@@ -29,9 +29,11 @@ function App() {
     setError('');
     setResponse(null);
     try {
-      const res = await axios.post('http://127.0.0.1:5000/run_agent', payload, {
+      const API_URL = "https://hiring-hr-agent-backend-ipu86kr5o-hazims-projects-0d445c6b.vercel.app";
+      const res = await axios.post(`${API_URL}/run_agent`, payload, {
         headers: { 'Content-Type': 'application/json' },
       });
+
       setResponse(res.data.result);
     } catch (err) {
       setError('Error running workflow: ' + (err.response?.data?.error || err.message));
